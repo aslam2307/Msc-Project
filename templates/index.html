@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>University of Roehampton - Clearing 2025 + Chatbot</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #fff;
+      padding: 10px 40px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .logo {
+      font-size: 28px;
+      font-weight: 900;
+      color: #3d1a52;
+      font-family: "Georgia", serif;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .logo::first-letter {
+      color: #f5a300;
+      font-size: 36px;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      margin: 0;
+      padding: 0;
+    }
+    nav ul li {
+      margin-left: 20px;
+      font-weight: bold;
+    }
+    nav ul li a {
+      text-decoration: none;
+      color: #000;
+    }
+
+    /* Hero Section */
+    .hero {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(135deg, #3d1a52, #5e2f73);
+      color: #fff;
+      padding: 60px;
+      min-height: 300px;
+    }
+    .hero-text {
+      max-width: 60%;
+    }
+    .hero-text h1 {
+      font-size: 48px;
+      margin: 0 0 20px;
+    }
+    .hero-text p {
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+    .hero-text a {
+      color: #ffd966;
+      font-weight: bold;
+    }
+    .btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 12px 24px;
+      background: #f5a300;
+      color: #000;
+      font-weight: bold;
+      border-radius: 30px;
+      text-decoration: none;
+    }
+
+    /* --- Chatbot --- */
+    #chat-toggle-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #007bff;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s ease;
+      z-index: 1001;
+    }
+    #chat-toggle-btn:hover { background: #0056b3; }
+    #chat-toggle-btn svg {
+      fill: white;
+      width: 28px;
+      height: 28px;
+    }
+
+    #chatbox {
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      width: 360px;
+      max-height: 550px;
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: translateY(100%);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+    #chatbox.open {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    #chatbox header {
+      background: #007bff;
+      color: white;
+      padding: 14px 20px;
+      font-size: 20px;
+      font-weight: 700;
+      user-select: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+
+    #messages {
+      flex-grow: 1;
+      padding: 15px 20px;
+      overflow-y: auto;
+      background: #f9fbfd;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      scroll-behavior: smooth;
+    }
+
+    .message {
+      max-width: 75%;
+      padding: 12px 16px;
+      border-radius: 20px;
+      line-height: 1.4;
+      font-size: 15px;
+      word-wrap: break-word;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      user-select: text;
+    }
+    .message.user {
+      align-self: flex-end;
+      background: #007bff;
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+    .message.bot {
+      align-self: flex-start;
+      background: #e5e5ea;
+      color: #222;
+      border-bottom-left-radius: 4px;
+    }
+
+    #input-area {
+      display: flex;
+      border-top: 1px solid #ddd;
+      padding: 12px 16px;
+      background: #fff;
+    }
+    #question {
+      flex-grow: 1;
+      padding: 12px 18px;
+      border: 1.8px solid #ccc;
+      border-radius: 25px;
+      font-size: 16px;
+      outline: none;
+      transition: border-color 0.3s ease;
+      font-family: inherit;
+    }
+    #question:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 6px #007bffaa;
+    }
+    #send {
+      background: #007bff;
+      border: none;
+      color: white;
+      padding: 0 22px;
+      margin-left: 14px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 16px;
+      transition: background 0.3s ease;
+      font-family: inherit;
+    }
+    #send:hover { background: #0056b3; }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="logo">Roehampton University</div>
+    <nav>
+      <ul>
+        <li><a href="#">Clearing</a></li>
+        <li><a href="#">Study</a></li>
+        <li><a href="#">Student life</a></li>
+        <li><a href="#">Student support</a></li>
+        <li><a href="#">Research</a></li>
+        <li><a href="#">Services for Business</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-text">
+      <h1>Clearing 2025.<br>Join us this September.</h1>
+      <p><a href="#">Call us</a> or <a href="#">apply online</a></p>
+      <a href="#" class="btn">Find out more</a>
+    </div>
+  </section>
+
+  <!-- Floating Chat Button -->
+  <div id="chat-toggle-btn" title="Chat with us">
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M2 3h20v14H6l-4 4V3z"/>
+    </svg>
+  </div>
+
+  <!-- Chatbox -->
+  <div id="chatbox" aria-hidden="true" role="region" aria-label="Chatbot">
+    <header>University of Roehampton Chatbot</header>
+    <div id="messages" aria-live="polite" aria-atomic="false"></div>
+    <div id="input-area">
+      <input id="question" type="text" placeholder="Ask a question..." aria-label="Type your question here" />
+      <button id="send" aria-label="Send question">Send</button>
+    </div>
+  </div>
+
+  <script>
+    const chatBtn = document.getElementById('chat-toggle-btn');
+    const chatbox = document.getElementById('chatbox');
+    const messagesDiv = document.getElementById('messages');
+    const questionInput = document.getElementById('question');
+    const sendBtn = document.getElementById('send');
+
+    // Toggle chatbox open/close
+    chatBtn.addEventListener('click', () => {
+      const isOpen = chatbox.classList.toggle('open');
+      chatbox.setAttribute('aria-hidden', !isOpen);
+      if (isOpen) questionInput.focus();
+    });
+
+    function appendMessage(sender, text) {
+      const div = document.createElement('div');
+      div.classList.add('message', sender);
+      div.textContent = text;
+      messagesDiv.appendChild(div);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    async function sendQuestion() {
+      const question = questionInput.value.trim();
+      if (!question) return;
+
+      appendMessage('user', question);
+      questionInput.value = '';
+      questionInput.disabled = true;
+      sendBtn.disabled = true;
+
+      try {
+        const response = await fetch('/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question }),
+        });
+
+        if (!response.ok) throw new Error('Network response was not ok.');
+
+        const data = await response.json();
+        appendMessage('bot', data.answer || 'Sorry, no answer.');
+      } catch (error) {
+        appendMessage('bot', 'Error: ' + error.message);
+      }
+
+      questionInput.disabled = false;
+      sendBtn.disabled = false;
+      questionInput.focus();
+    }
+
+    sendBtn.addEventListener('click', sendQuestion);
+    questionInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') sendQuestion();
+    });
+  </script>
+</body>
+</html>
